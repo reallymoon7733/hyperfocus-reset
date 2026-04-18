@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hyperfocus Hangover Reset</title>
+
+<!--
+  ╔══════════════════════════════════════════════════════╗
+  ║   THE HYPERFOCUS HANGOVER RESET                      ║
+  ║   An ADHD Recovery Tool                              ║
+  ║   Self-contained — no internet required              ║
+  ╚══════════════════════════════════════════════════════╝
+
+  FONTS: Google Fonts are loaded via <link> below.
+  They require an internet connection on first open.
+  The tool works offline with elegant system-font fallbacks.
+-->
+
+<!-- Google Fonts — loaded async so offline use still works -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap"
+  rel="stylesheet"
+  media="print"
+  onload="this.media='all'"
+>
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+</noscript>
+
+<style>
+
+/* ── RESET ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { font-family: inherit; cursor: pointer; }
+input  { font-family: inherit; }
+
+/* ── ROOT VARS ──────────────────────────────────────── */
+:root {
+  --bg:            #F7F5F2;
+  --card:          #FFFFFF;
+  --main:          #3E2F26;
+  --sub:           #6E6259;
+  --muted:         #8C7B70;
+  --line:          #B8ADA4;
+  --light:         #D4C9C0;
+  --warm:          #EFEBE6;
+  --accent:        #7FA58C;
+  --accent-bg:     #E6EFEA;
+  --accent-border: #7FA58C;
+  --btn-primary-bg:#3E2F26;
+  --shadow:        0 4px 32px rgba(62,47,38,0.09);
+  --shadow2:       0 2px 12px rgba(62,47,38,0.06);
+
+  /* Font stacks — premium online, elegant offline */
+  --font-display: 'Cormorant Garamond', 'Georgia', 'Times New Roman', serif;
+  --font-body:    'DM Sans', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ── BODY ────────────────────────────────────────────── */
+html, body {
+  min-height: 100%;
+  height: 100%;
+  background: var(--bg);
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── LAYOUT ──────────────────────────────────────────── */
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px 36px;
+}
+
+/* ── PROGRESS BAR ────────────────────────────────────── */
+.prog-track {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--warm);
+  z-index: 200;
+}
+.prog-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── STEP LABEL ──────────────────────────────────────── */
+.step-label {
+  position: fixed;
+  top: 18px; left: 0; right: 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .16em;
+  color: var(--line);
+  text-transform: uppercase;
+  z-index: 200;
+  pointer-events: none;
+}
+
+/* ── CARD ────────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 44px 40px 40px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeUp .45s cubic-bezier(.4,0,.2,1) both;
+}
+.card.active { display: flex; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SCREEN LABEL ────────────────────────────────────── */
+.card-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* ── TITLE ───────────────────────────────────────────── */
+.card-title {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 7vw, 48px);
+  font-weight: 300;
+  line-height: 1.18;
+  color: var(--main);
+  margin-bottom: 20px;
+}
+.card-title em { font-style: italic; }
+
+/* ── HAIRLINE ────────────────────────────────────────── */
+.hairline {
+  width: 36px; height: 1px;
+  background: var(--accent);
+  margin: 0 auto 24px;
+  opacity: 0.5;
+}
+
+/* ── BODY TEXT ───────────────────────────────────────── */
+.card-body {
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--sub);
+  margin-bottom: 28px;
+  max-width: 360px;
+}
+.card-body strong { color: var(--main); font-weight: 500; }
+.card-body p + p  { margin-top: 10px; }
+
+/* ── QUOTE BOX ───────────────────────────────────────── */
+.quote {
+  background: var(--warm);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  width: 100%;
+  text-align: left;
+  border-left: 3px solid var(--accent);
+}
+.quote p {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--main);
+  line-height: 1.55;
+}
+
+/* ── HINT ────────────────────────────────────────────── */
+.hint {
+  font-size: 12px;
+  color: var(--line);
+  font-style: italic;
+  margin-bottom: 22px;
+}
+
+/* ── CHIPS ───────────────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+.chip {
+  padding: 10px 18px;
+  border: 1.5px solid var(--accent-border);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--sub);
+  background: transparent;
+  transition: all .22s;
+  line-height: 1;
+}
+.chip:hover { border-color: var(--accent); color: var(--main); background: var(--accent-bg); }
+.chip.on    { background: var(--accent-bg); border-color: var(--accent); color: var(--main); font-weight: 500; }
+
+/* ── OPTION ROWS ─────────────────────────────────────── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  border: 1.5px solid var(--accent-border);
+  border-radius: 12px;
+  background: #FAFAF9;
+  text-align: left;
+  transition: all .22s;
+  width: 100%;
+}
+.opt:hover { border-color: var(--accent); background: var(--accent-bg); }
+.opt.on    { border-color: var(--accent); background: var(--accent-bg); }
+
+.opt-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--light);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .22s;
+  background: var(--card);
+}
+.opt.on .opt-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.opt.on .opt-dot::after {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: white;
+}
+.opt-main { font-size: 14px; color: var(--main); font-weight: 400; }
+.opt-sub  { font-size: 11px; color: var(--line); margin-top: 2px; }
+
+/* ── BREATHE ─────────────────────────────────────────── */
+.breathe-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px 0 28px;
+}
+.b-ring {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  border: 1px solid var(--light);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  animation: bth 5s ease-in-out infinite;
+}
+.b-ring::before {
+  content: '';
+  position: absolute; inset: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  animation: bth 5s ease-in-out infinite .3s;
+}
+.b-ring::after {
+  content: '';
+  position: absolute; inset: 26px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  animation: bth 5s ease-in-out infinite .6s;
+}
+.b-text {
+  position: relative; z-index: 1;
+  font-size: 9px; letter-spacing: .16em;
+  color: var(--accent); text-transform: uppercase; font-weight: 500;
+}
+@keyframes bth {
+  0%,100% { transform: scale(1);    opacity: .65; }
+  50%      { transform: scale(1.09); opacity: 1;   }
+}
+
+/* ── INPUT ───────────────────────────────────────────── */
+.field {
+  width: 100%;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.field-lbl {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.field-inp {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  padding: 10px 0;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-style: italic;
+  color: var(--main);
+  outline: none;
+  transition: border-color .2s;
+}
+.field-inp:focus        { border-color: var(--accent); }
+.field-inp::placeholder { color: var(--light); }
+
+/* ── TIMER BOX ───────────────────────────────────────── */
+.timer-box {
+  width: 100%;
+  background: var(--warm);
+  border-radius: 14px;
+  padding: 28px 24px 22px;
+  margin-bottom: 20px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--shadow2);
+}
+.timer-box.show { display: flex; }
+.timer-lbl {
+  font-size: 10px; letter-spacing: .18em;
+  color: var(--muted); text-transform: uppercase; font-weight: 500;
+}
+.timer-num {
+  font-family: var(--font-display);
+  font-size: 58px; font-weight: 300;
+  color: var(--main); line-height: 1;
+  letter-spacing: .02em;
+}
+.timer-track {
+  width: 100%; height: 2px;
+  background: var(--light); border-radius: 2px;
+}
+.timer-fill {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  transition: width 1s linear;
+}
+
+/* ── FINAL BANNER ────────────────────────────────────── */
+.final-banner {
+  font-family: var(--font-display);
+  font-size: 21px; font-style: italic; font-weight: 300;
+  color: var(--sub);
+  padding: 22px 0;
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn-wrap { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+
+.btn {
+  width: 100%; padding: 17px 20px;
+  border-radius: 12px; font-size: 14px;
+  letter-spacing: .06em; font-weight: 400;
+  border: none; transition: all .22s;
+  line-height: 1;
+}
+.btn-primary {
+  background: var(--btn-primary-bg); color: #F7F5F2;
+  box-shadow: 0 2px 12px rgba(62,47,38,.18);
+}
+.btn-primary:hover  { background: #2a1f18; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(62,47,38,.25); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { background: var(--light); color: var(--card); box-shadow: none; cursor: default; }
+
+.btn-outline {
+  background: transparent; color: var(--sub);
+  border: 1.5px solid var(--accent-border);
+}
+.btn-outline:hover { border-color: var(--accent); color: var(--main); background: var(--accent-bg); }
+
+.btn-ghost {
+  background: none; border: none;
+  color: var(--line); font-size: 12px;
+  letter-spacing: .06em; padding: 6px 0;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.btn-ghost:hover { color: var(--muted); }
+
+/* ── SUCCESS ICON ────────────────────────────────────── */
+.success-ring {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--accent-bg);
+  border: 1.5px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 26px;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .card { padding: 36px 22px 30px; max-width: 100%; }
+  .card-title { font-size: 28px; }
+  .btn { padding: 15px 18px; font-size: 13px; }
+}
+
+/* Tablet (481px – 900px) */
+@media (min-width: 481px) and (max-width: 900px) {
+  .shell { padding: 24px 32px 40px; }
+  .card  { max-width: 600px !important; padding: 54px 52px 48px !important; border-radius: 22px; }
+  .card-title { font-size: 40px !important; }
+  .card-body  { font-size: 16.5px !important; }
+  .btn { padding: 18px 22px !important; font-size: 15px !important; }
+  .opt { padding: 17px 20px; }
+  .opt-main { font-size: 15px; }
+  .chip { font-size: 14px; padding: 11px 20px; }
+  .quote p { font-size: 21px; }
+  .timer-num { font-size: 60px; }
+  .field-inp { font-size: 22px; }
+}
+
+/* Desktop (≥ 901px) */
+@media (min-width: 901px) {
+  .shell { padding: 24px 40px 40px; }
+  .card  { max-width: 720px !important; padding: 64px 68px 58px !important; border-radius: 26px; }
+  .card-title { font-size: 50px !important; line-height: 1.15; }
+  .card-body  { font-size: 17.5px !important; max-width: 520px !important; }
+  .btn { padding: 20px 28px !important; font-size: 15.5px !important; border-radius: 13px; }
+  .btn-wrap { gap: 12px; }
+  .opt { padding: 18px 22px; }
+  .opt-main { font-size: 15.5px; }
+  .opt-sub  { font-size: 12.5px; }
+  .chip { font-size: 14.5px; padding: 12px 24px; }
+  .quote p { font-size: 23px; }
+  .timer-num { font-size: 68px; }
+  .timer-box { padding: 32px 28px 26px; }
+  .final-banner { font-size: 24px; }
+  .field-inp { font-size: 24px; }
+  .hairline { width: 44px; }
+  .success-ring { width: 72px; height: 72px; font-size: 30px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+<!-- Step indicator -->
+<div class="step-label" id="stepLabel">Step 1 of 6</div>
+
+<!-- App shell -->
+<div class="shell">
+
+  <!-- ══ SCREEN 1 — WHAT JUST HAPPENED ══════════════ -->
+  <div class="card active" id="s1">
+    <div class="card-label">What just happened</div>
+    <h1 class="card-title">You lost hours.<br><em>This is the crash.</em></h1>
+    <div class="hairline"></div>
+    <div class="card-body">
+      <p><strong>You didn't fail.</strong> You were in hyperfocus.</p>
+      <p>Your brain tunneled into one thing and ignored everything else.</p>
+      <p>Now you feel off because your system dropped suddenly.</p>
+    </div>
+    <div class="quote"><p>"This tool brings you back — step by step."</p></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="go(2)">I understand — let's go</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2 — THE CRASH MAP ═══════════════════ -->
+  <div class="card" id="s2">
+    <div class="card-label">The Crash Map</div>
+    <h1 class="card-title">Where are you<br><em>right now?</em></h1>
+    <div class="hairline"></div>
+    <p class="hint">Pick what feels true. Don't overthink it.</p>
+    <div class="chips">
+      <button class="chip" onclick="this.classList.toggle('on')">Disoriented</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Mentally overloaded</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Guilty</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Physically drained</button>
+      <button class="chip" onclick="this.classList.toggle('on')">Can't restart</button>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="go(3)">This is where I am</button>
+      <button class="btn btn-ghost" onclick="go(3)">Skip this step</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3 — STOP THE SPIRAL ════════════════ -->
+  <div class="card" id="s3">
+    <div class="card-label">Stop the Spiral</div>
+    <h1 class="card-title">Pause<br><em>first.</em></h1>
+    <div class="hairline"></div>
+    <div class="card-body"><p>Take one breath. Let it out slowly.</p></div>
+    <div class="breathe-wrap">
+      <div class="b-ring"><span class="b-text">breathe</span></div>
+    </div>
+    <div class="quote">
+      <p>"I didn't mess up.<br>I'm just switching back."</p>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="go(4)">I'm ready to continue</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 4 — RESET YOUR BODY ════════════════ -->
+  <div class="card" id="s4">
+    <div class="card-label">Reset Your System</div>
+    <h1 class="card-title">Pick one<br><em>body reset.</em></h1>
+    <div class="hairline"></div>
+    <p class="hint">Choose one. Do it before moving on.</p>
+    <div class="options">
+      <button class="opt" onclick="pick(this,'s4')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Drink water</div><div class="opt-sub">Hydrates the crash</div></div>
+      </button>
+      <button class="opt" onclick="pick(this,'s4')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Stand up</div><div class="opt-sub">Breaks the stuck state</div></div>
+      </button>
+      <button class="opt" onclick="pick(this,'s4')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Walk 2 minutes</div><div class="opt-sub">Resets nervous system</div></div>
+      </button>
+      <button class="opt" onclick="pick(this,'s4')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Wash your face</div><div class="opt-sub">Signals a new moment</div></div>
+      </button>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="go(5)">Done — I did it</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 5 — RE-ENTER ════════════════════════ -->
+  <div class="card" id="s5">
+    <div class="card-label">Re-Enter</div>
+    <h1 class="card-title">Start again.<br><em>Small is enough.</em></h1>
+    <div class="hairline"></div>
+    <div class="field">
+      <label class="field-lbl" for="taskInp">Your next tiny step</label>
+      <input class="field-inp" id="taskInp" type="text" placeholder="e.g. open the document…" autocomplete="off">
+    </div>
+    <div class="timer-box" id="timerBox">
+      <div class="timer-lbl">Focus timer</div>
+      <div class="timer-num" id="timerNum">2:00</div>
+      <div class="timer-track"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="timerBtn" onclick="startTimer()">Start 2-minute timer</button>
+      <button class="btn btn-outline" id="contBtn5" style="display:none" onclick="go(6)">Continue to next step →</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 6 — STABILIZE (choice) ════════════ -->
+  <div class="card" id="s6">
+    <div class="card-label">Stabilize</div>
+    <h1 class="card-title">Don't crash<br><em>again.</em></h1>
+    <div class="hairline"></div>
+    <p class="hint">After your 2 minutes — what's your next move?</p>
+    <div class="options">
+      <button class="opt" onclick="s6pick(this, 'continue')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Continue for 2 more minutes</div><div class="opt-sub">You're back. Stay with it.</div></div>
+      </button>
+      <button class="opt" onclick="s6pick(this, 'break')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Take a short break</div><div class="opt-sub">Reset done. Take space, come back clean.</div></div>
+      </button>
+      <button class="opt" onclick="s6pick(this, 'stop')">
+        <div class="opt-dot"></div>
+        <div><div class="opt-main">Stop and return later</div><div class="opt-sub">Session complete. You can restart anytime.</div></div>
+      </button>
+    </div>
+    <p class="hint" style="margin-bottom:0">Progress is built in small returns.</p>
+  </div>
+
+  <!-- ══ SCREEN 6A — CONTINUE TIMER ═══════════════ -->
+  <div class="card" id="s6a">
+    <div class="card-label">Keep Going</div>
+    <h1 class="card-title">Stay in it.<br><em>Just a little more.</em></h1>
+    <div class="hairline"></div>
+    <div class="card-body"><p>Two more minutes. Same rule — small and steady.</p></div>
+    <div class="timer-box show" id="timerBox6a">
+      <div class="timer-lbl">Focus timer</div>
+      <div class="timer-num" id="timerNum6a">2:00</div>
+      <div class="timer-track"><div class="timer-fill" id="timerFill6a" style="width:100%"></div></div>
+    </div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="timerBtn6a" onclick="startTimer6a()">Start timer</button>
+      <button class="btn btn-outline" id="contBtn6a" style="display:none" onclick="returnToStabilize()">Back to Stabilize →</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 6B — SHORT BREAK ═══════════════════ -->
+  <div class="card" id="s6b">
+    <div class="card-label">Short Break</div>
+    <h1 class="card-title">Step away.<br><em>Come back ready.</em></h1>
+    <div class="hairline"></div>
+    <div class="card-body">
+      <p>Breathe. Move. Let your brain decompress.</p>
+      <p>You're not quitting — you're recovering intentionally.</p>
+    </div>
+    <div class="quote"><p>"A real break is part of the work."</p></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="go(5)">I'm ready to return</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 6C — STOP ══════════════════════════ -->
+  <div class="card" id="s6c">
+    <div class="card-label">Intentional Stop</div>
+    <h1 class="card-title">You stopped.<br><em>That's control.</em></h1>
+    <div class="hairline"></div>
+    <div class="card-body">
+      <p>Stopping on purpose is different from crashing.</p>
+      <p>You made a decision. That's exactly what recovery looks like.</p>
+    </div>
+    <div class="quote"><p>"Knowing when to stop is a skill."</p></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="goEnd()">Close session</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN END — FINAL ════════════════════════ -->
+  <div class="card" id="sEnd">
+    <div class="success-ring">✦</div>
+    <div class="card-label">Session complete</div>
+    <h1 class="card-title">You came back.</h1>
+    <div class="hairline"></div>
+    <div class="final-banner">You didn't lose the day. You came back.<br><br>You can repeat this cycle anytime you feel the drop.</div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" onclick="resetTool()">↺ Start again</button>
+      <button class="btn btn-ghost" onclick="resetTool()">Exit session</button>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+// ── Screen registry ───────────────────────────────────
+const ALL_SCREENS = ['s1','s2','s3','s4','s5','s6','s6a','s6b','s6c','sEnd'];
+let current        = 's1';
+let timerInterval  = null;
+let timer6aInterval= null;
+let timerSecs      = 120;
+let timer6aSecs    = 120;
+
+// ── Navigation ────────────────────────────────────────
+function showScreen(id) {
+  ALL_SCREENS.forEach(sid => {
+    const el = document.getElementById(sid);
+    el.classList.remove('active');
+    el.style.animation = 'none';
+  });
+  const next = document.getElementById(id);
+  void next.offsetWidth; // reflow to restart animation
+  next.style.animation = '';
+  next.classList.add('active');
+  current = id;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function go(n)   { showScreen('s' + n); }
+function goEnd() { showScreen('sEnd'); }
+
+// ── Return to STABILIZE (clears 6A timer state + s6 selections) ──
+function returnToStabilize() {
+  clearInterval(timer6aInterval);
+  timer6aSecs = 120;
+  document.getElementById('timerNum6a').textContent  = '2:00';
+  document.getElementById('timerNum6a').style.color  = '';
+  document.getElementById('timerFill6a').style.width = '100%';
+  document.getElementById('timerBtn6a').disabled     = false;
+  document.getElementById('timerBtn6a').textContent  = 'Start timer';
+  document.getElementById('contBtn6a').style.display = 'none';
+  document.querySelectorAll('#s6 .opt').forEach(o => o.classList.remove('on'));
+  showScreen('s6');
+}
+
+// ── Progress bar ──────────────────────────────────────
+function updateProgress() {
+  const order  = { s1:1, s2:2, s3:3, s4:4, s5:5, s6:6, s6a:6, s6b:6, s6c:6, sEnd:6 };
+  const step   = order[current] || 1;
+  const pct    = ((step - 1) / 5) * 100;
+  document.getElementById('progFill').style.width = pct + '%';
+  const labels = {
+    s1:'Step 1 of 6', s2:'Step 2 of 6', s3:'Step 3 of 6',
+    s4:'Step 4 of 6', s5:'Step 5 of 6', s6:'Step 6 of 6',
+    s6a:'Step 6 of 6', s6b:'Step 6 of 6', s6c:'Step 6 of 6',
+    sEnd:'Complete'
+  };
+  document.getElementById('stepLabel').textContent = labels[current] || '';
+}
+
+// ── Option picker (single-select) ────────────────────
+function pick(el, screenId) {
+  document.querySelectorAll('#' + screenId + ' .opt').forEach(o => o.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ── Screen 6 branching choice ────────────────────────
+function s6pick(el, choice) {
+  document.querySelectorAll('#s6 .opt').forEach(o => o.classList.remove('on'));
+  el.classList.add('on');
+  setTimeout(() => {
+    if (choice === 'continue') showScreen('s6a');
+    if (choice === 'break')    showScreen('s6b');
+    if (choice === 'stop')     showScreen('s6c');
+  }, 260);
+}
+
+// ── Timer formatting ──────────────────────────────────
+function fmt(s) {
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+// ── Screen 5 timer ────────────────────────────────────
+function startTimer() {
+  const inp = document.getElementById('taskInp').value.trim();
+  if (!inp) { document.getElementById('taskInp').focus(); return; }
+
+  const btn  = document.getElementById('timerBtn');
+  const cont = document.getElementById('contBtn5');
+  const box  = document.getElementById('timerBox');
+  const num  = document.getElementById('timerNum');
+  const fill = document.getElementById('timerFill');
+
+  box.classList.add('show');
+  btn.disabled = true;
+  btn.textContent = 'Timer running…';
+  timerSecs = 120;
+
+  timerInterval = setInterval(() => {
+    timerSecs--;
+    num.textContent = fmt(timerSecs);
+    fill.style.width = ((timerSecs / 120) * 100) + '%';
+    if (timerSecs <= 0) {
+      clearInterval(timerInterval);
+      num.textContent = 'Done ✓';
+      num.style.color = 'var(--accent)';
+      fill.style.width = '0%';
+      btn.textContent = 'Timer complete';
+      cont.style.display = 'block';
+    }
+  }, 1000);
+}
+
+// ── Screen 6A timer ───────────────────────────────────
+function startTimer6a() {
+  const btn  = document.getElementById('timerBtn6a');
+  const cont = document.getElementById('contBtn6a');
+  const num  = document.getElementById('timerNum6a');
+  const fill = document.getElementById('timerFill6a');
+
+  btn.disabled = true;
+  btn.textContent = 'Timer running…';
+  timer6aSecs = 120;
+
+  timer6aInterval = setInterval(() => {
+    timer6aSecs--;
+    num.textContent = fmt(timer6aSecs);
+    fill.style.width = ((timer6aSecs / 120) * 100) + '%';
+    if (timer6aSecs <= 0) {
+      clearInterval(timer6aInterval);
+      num.textContent = 'Done ✓';
+      num.style.color = 'var(--accent)';
+      fill.style.width = '0%';
+      btn.textContent = 'Timer complete';
+      cont.style.display = 'block';
+    }
+  }, 1000);
+}
+
+// ── Full reset ────────────────────────────────────────
+function resetTool() {
+  clearInterval(timerInterval);
+  clearInterval(timer6aInterval);
+
+  timerSecs = 120;
+  document.getElementById('timerNum').textContent   = '2:00';
+  document.getElementById('timerNum').style.color   = '';
+  document.getElementById('timerFill').style.width  = '100%';
+  document.getElementById('timerBox').classList.remove('show');
+  document.getElementById('timerBtn').disabled      = false;
+  document.getElementById('timerBtn').textContent   = 'Start 2-minute timer';
+  document.getElementById('contBtn5').style.display = 'none';
+  document.getElementById('taskInp').value          = '';
+
+  timer6aSecs = 120;
+  document.getElementById('timerNum6a').textContent   = '2:00';
+  document.getElementById('timerNum6a').style.color   = '';
+  document.getElementById('timerFill6a').style.width  = '100%';
+  document.getElementById('timerBtn6a').disabled      = false;
+  document.getElementById('timerBtn6a').textContent   = 'Start timer';
+  document.getElementById('contBtn6a').style.display  = 'none';
+
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('on'));
+
+  showScreen('s1');
+}
+
+// ── Init ──────────────────────────────────────────────
+updateProgress();
+</script>
+</body>
+</html>
